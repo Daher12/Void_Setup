@@ -3,7 +3,7 @@ ln -sv /etc/sv/dbus /var/service/
 ln -sv /etc/sv/iwd /var/service/
 ln -sv /etc/sv/NetworkManager /var/service/
 
-useradd -m -G wheel,floppy,audio,video,cdrom,optical,network,kvm,xbuilder,input dk
+useradd -m -G wheel,floppy,audio,video,cdrom,optical,network,kvm,xbuilder,input,rtkit dk
 passwd dk
 
 reboot
