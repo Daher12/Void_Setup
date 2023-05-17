@@ -1,0 +1,9 @@
+PKGNAME="$1"
+# get major version, e.g. "4.8" for "linux4.8"
+major_version=$(echo $PKGNAME | cut -c 6-)
+
+# get hex number of the matching entry
+hexnum=$(efibootmgr | grep "Void Linux with kernel ${major_version}" | cut -c "5-8")
+
+# delete it
+[ "$hexnum" ] && efibootmgr -Bq -b $hexnum
