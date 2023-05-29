@@ -1,0 +1,3 @@
+git clone https://gitlab.freedesktop.org/wlroots/wlroots.git
+git clone https://gitlab.freedesktop.org/emersion/libdisplay-info.git
+git clone https://gitlab.freedesktop.org/emersion/libliftoff.git
