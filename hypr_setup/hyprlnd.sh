@@ -1,0 +1,1 @@
+git clone --recursive https://github.com/hyprwm/Hyprland ~/.local/setup/Hyprland

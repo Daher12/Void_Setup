@@ -1,0 +1,1 @@
+git clone https://gitlab.freedesktop.org/emersion/libdisplay-info.git ~/.local/setup/Hyprland/subprojects/wlroots/subprojects/libdisplay-info

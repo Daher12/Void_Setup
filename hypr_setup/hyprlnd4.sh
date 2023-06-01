@@ -1,0 +1,1 @@
+sudo make clear && sudo make config && make protocols

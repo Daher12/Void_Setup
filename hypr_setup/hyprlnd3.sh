@@ -1,0 +1,1 @@
+git clone https://gitlab.freedesktop.org/emersion/libliftoff.git ~/.local/setup/Hyprland/subprojects/wlroots/subprojects/libliftoff
