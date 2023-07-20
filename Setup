@@ -25,24 +25,14 @@ sudo mount -o $BTRFS_OPTS /dev/mapper/void /mnt
 sudo btrfs su cr /mnt/home
 sudo btrfs su cr /mnt/snapshots
 
-
-sudo vgcreate void /dev/mapper/void
-sudo lvcreate --name root -L 50G void
-sudo lvcreate --name home -l 100%FREE void
-
-sudo mkfs.f2fs -l root -O extra_attr,inode_checksum,sb_checksum,compression /dev/void/root
-sudo mkfs.f2fs -l home -O extra_attr,inode_checksum,sb_checksum,compression /dev/void/home
-
-sudo mount /dev/void/root /mnt
 sudo mkdir -p /mnt/home
-sudo mount /dev/void/home /mnt/home
+sudo mount -o $BTRFS_OPTS,subvol=home /dev/mapper/void /mnt/home
+sudo mkdir -p /mnt/.snapshots
+sudo mount -o $BTRFS_OPTS,subvol=snapshots /dev/mapper/cryptroot /mnt/.snapshots
 sudo mkdir -p /mnt/boot
 sudo mount /dev/sda2 /mnt/boot
 sudo mkdir -p /mnt/boot/efi
 sudo mount /dev/sda1 /mnt/boot/efi
-
-sudo mount -o $BTRFS_OPTS,subvol=home /dev/mapper/cryptroot /mnt/home
-sudo mount -o $BTRFS_OPTS,subvol=snapshots /dev/mapper/cryptroot /mnt/.snapshots
 
 sudo mkdir -p /mnt/var
 sudo btrfs su cr /mnt/var/cache
@@ -55,7 +45,7 @@ sudo btrfs su cr /mnt/var/lib/flatpak
 sudo mkdir -p /mnt/var/db/xbps/keys
 sudo cp /var/db/xbps/keys/* /mnt/var/db/xbps/keys/
 
-sudo xbps-install -S -R https://repo-de.voidlinux.org/current -r /mnt base-system lvm2 cryptsetup nano xmirror btrfs-progs lz4 f2fs-tools 
+sudo xbps-install -S -R https://repo-de.voidlinux.org/current -r /mnt base-system cryptsetup nano xmirror btrfs-progs lz4
 
 su
 xchroot /mnt
@@ -77,21 +67,17 @@ xbps-install void-repo-nonfree
 xbps-install -S
 
 nano /etc/dracut.conf.d/override.conf
-  hostonly="yes"
-  hostonly_cmdline="no"
-  stdloglvl="3"
-  show_modules="yes"
-  compress="lz4"
-  omit_dracutmodules+=" brltty rpmversion btrfs selinux convertfs ssh-client "
+hostonly="yes"
+hostonly_cmdline="no"
+stdloglvl="3"
+show_modules="yes"
+compress="lz4"
+omit_dracutmodules+=" brltty rpmversion selinux convertfs ssh-client "
   
 
 nano /etc/fstab
-  tmpfs           /tmp      tmpfs defaults,nosuid,nodev 0 0
-  /dev/sda2	      /boot	    ext4	defaults,relatime	0	2
-  /dev/sda1	      /boot/efi	vfat	defaults,relatime	0	2
-  /dev/void/root  /         f2fs  compress_algorithm=zstd:3,compress_chksum,atgc,gc_merge,lazytime,nodiscard  0 0
-  /dev/void/home  /home     f2fs  compress_algorithm=zstd:3,compress_chksum,atgc,gc_merge,lazytime,nodiscard  0 0
-
+  /dev/sda2 /boot	ext4	defaults,relatime	0	2
+  /dev/sda1	/boot/efi	vfat	defaults,relatime	0	2
 
 xbps-install dbus-elogind dbus-elogind-libs elogind #dbus-elogind-x11 Optional
 
@@ -104,22 +90,20 @@ nano /etc/default/dracut-uefi-hook
 
 sudo blkid
 
-  KERNEL_CMDLINE="loglevel=3 rd.luks.name=<LUKS root UUID>=void rd.lvm.vg=void root=UUID=<UUID> rootflags=rw rd.auto=1 rd.luks.allow-discards rd.driver.pre=i915 udev.log_level=2 console=tty6 vt.global_cursor_default=0 quiet splash"
+ KERNEL_CMDLINE="loglevel=3 rd.luks.name=<LUKS root UUID>=void root=UUID=<UUID> rootflags=rw rootfstype=btrfs rd.auto=1 rd.luks.allow-discards rd.driver.pre=i915 udev.log_level=2 console=tty6 vt.global_cursor_default=0 quiet splash"
 
 
 xbps-install NetworkManager iwd
 mkdir -p /etc/NetworkManager/conf.d/
 nano /etc/NetworkManager/conf.d/wifi_backend.conf
-  [device]
-  wifi.backend=iwd
-  wifi.iwd.autoconnect=yes
+[device]
+wifi.backend=iwd
+wifi.iwd.autoconnect=yes
 
 nano /etc/iwd/main.conf
-  [General]
-  UseDefaultInterface=true
+[General]
+UseDefaultInterface=true
   
-  
-
 xbps-reconfigure -fa
 
 exit
