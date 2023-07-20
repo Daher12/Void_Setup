@@ -16,8 +16,15 @@ sudo wipefs -a /dev/sda
 sudo mkfs.vfat -F32 -n EFI /dev/sda1
 sudo mkfs.ext4 -L BOOT /dev/sda2
 sudo cryptsetup luksFormat --type=luks2 -s=512 /dev/sda3
-
 sudo cryptsetup luksOpen /dev/sda3 void
+
+sudo mkfs.btrfs -L Void /dev/mapper/void
+sudo BTRFS_OPTS="rw,relatime,compress=zstd,space_cache=v2,discard=async"
+sudo mount -o $BTRFS_OPTS /dev/mapper/void /mnt
+
+sudo btrfs su cr /mnt/home
+sudo btrfs su cr /mnt/snapshots
+
 
 sudo vgcreate void /dev/mapper/void
 sudo lvcreate --name root -L 50G void
@@ -34,10 +41,21 @@ sudo mount /dev/sda2 /mnt/boot
 sudo mkdir -p /mnt/boot/efi
 sudo mount /dev/sda1 /mnt/boot/efi
 
+sudo mount -o $BTRFS_OPTS,subvol=home /dev/mapper/cryptroot /mnt/home
+sudo mount -o $BTRFS_OPTS,subvol=snapshots /dev/mapper/cryptroot /mnt/.snapshots
+
+sudo mkdir -p /mnt/var
+sudo btrfs su cr /mnt/var/cache
+sudo btrfs su cr /mnt/var/tmp
+sudo btrfs su cr /mnt/var/log
+sudo mkdir -p /mnt/var/lib
+sudo btrfs su cr /mnt/var/lib/flatpak
+
+
 sudo mkdir -p /mnt/var/db/xbps/keys
 sudo cp /var/db/xbps/keys/* /mnt/var/db/xbps/keys/
 
-sudo xbps-install -S -R https://repo-de.voidlinux.org/current -r /mnt base-system lvm2 cryptsetup nano xmirror f2fs-tools lz4 linux-firmware-intel
+sudo xbps-install -S -R https://repo-de.voidlinux.org/current -r /mnt base-system lvm2 cryptsetup nano xmirror btrfs-progs lz4 f2fs-tools 
 
 su
 xchroot /mnt
@@ -86,7 +104,7 @@ nano /etc/default/dracut-uefi-hook
 
 sudo blkid
 
-  KERNEL_CMDLINE="loglevel=3 rd.luks.name=<LUKS root UUID>=void rd.lvm.vg=void root=/dev/void/root rootflags=rw,atgc rd.auto=1 rd.luks.allow-discards rd.driver.pre=i915 udev.log_level=2 console=tty6 vt.global_cursor_default=0 quiet splash"
+  KERNEL_CMDLINE="loglevel=3 rd.luks.name=<LUKS root UUID>=void rd.lvm.vg=void root=UUID=<UUID> rootflags=rw rd.auto=1 rd.luks.allow-discards rd.driver.pre=i915 udev.log_level=2 console=tty6 vt.global_cursor_default=0 quiet splash"
 
 
 xbps-install NetworkManager iwd
