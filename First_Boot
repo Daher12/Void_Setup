@@ -1,3 +1,5 @@
+## https://gitlab.gnome.org/Community/Ubuntu/mutter/-/tree/triple-buffering-v4-44 > Edit mutter template in void packages
+
 touch /etc/sv/acpid/down
 ln -sv /etc/sv/dbus /var/service/
 ln -sv /etc/sv/iwd /var/service/
