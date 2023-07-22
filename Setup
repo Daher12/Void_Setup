@@ -83,7 +83,7 @@ UUID= /.snapshots btrfs subvol=snapshots,noatime 0 0
 
 xbps-install dbus-elogind dbus-elogind-libs elogind #dbus-elogind-x11 Optional
 
-xbps-install intel-ucode rtkit dracut-uefi gummiboot-efistub
+xbps-install intel-ucode rtkit dracut-uefi gummiboot-efistub bluez libbluetooth 
 
 cp /usr/lib/gummiboot/linuxx64.efi.stub /boot/efi/
 nano /etc/default/dracut-uefi-hook
