@@ -21,7 +21,7 @@ sudo xbps-install xorg-fonts xorg-minimal xorg-server-xwayland
 sudo xbps-install xdg-desktop-portal xdg-user-dirs xdg-user-dirs-gtk xdg-utils
 sudo xbps-install gnome-core
 
-sudo xbps-install firefox fish-shell xtools ffmpeg unrar unzip 7zip file-roller vlc zramen 
+sudo xbps-install firefox fish-shell xtools ffmpeg unrar unzip 7zip file-roller vlc zramen chrony
 sudo xbps-install earlyoom thermald tlp pipewire wireplumber wireplumber-elogind alsa-utils sbctl alsa-firmware  
  
 ##sudo xbps-install flatpak fuse fuse3
@@ -29,6 +29,7 @@ sudo xbps-install earlyoom thermald tlp pipewire wireplumber wireplumber-elogind
 sudo nano /etc/tlp.conf
 sudo nano /etc/sv/zramen/conf 
 
+sudo ln -sv /etc/sv/chronyd /var/service
 sudo ln -sv /etc/sv/thermald /var/service/
 sudo ln -sv /etc/sv/earlyoom /var/service/
 sudo ln -sv /etc/sv/tlp /var/service
