@@ -1,0 +1,3 @@
+#!/bin/sh
+
+btrfs balance start -musage=5 /
