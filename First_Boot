@@ -18,8 +18,8 @@ sudo xbps-install xdg-desktop-portal xdg-user-dirs xdg-user-dirs-gtk xdg-utils
 sudo xbps-install gnome-core
 
 sudo xbps-install firefox fish-shell xtools ffmpeg unrar unzip 7zip file-roller vlc zramen 
-sudo xbps-install earlyoom thermald tlp pipewire wireplumber alsa-utils sbctl alsa-firmware
-
+sudo xbps-install earlyoom thermald tlp pipewire wireplumber wireplumber-elogind alsa-utils sbctl alsa-firmware bluez libbluetooth     
+ 
 ##sudo xbps-install flatpak fuse fuse3
 
 sudo nano /etc/tlp.conf
@@ -29,6 +29,7 @@ sudo ln -sv /etc/sv/thermald /var/service/
 sudo ln -sv /etc/sv/earlyoom /var/service/
 sudo ln -sv /etc/sv/tlp /var/service
 sudo ln -sv /etc/sv/zramen /var/service
+sudo ln -sv /etc/bluetoothd /var/service
 
 sudo ln -sv /usr/share/applications/pipewire.desktop /etc/xdg/autostart/pipewire.desktop ## Gnome
 sudo cp -a /usr/share/pipewire /etc
