@@ -9,8 +9,8 @@
 
 ## Vorbereitung:
 
+sudo wipefs -a /dev/*
 sudo cfdisk
-sudo wipefs -a /dev/sda
 
 
 sudo mkfs.vfat -F32 -n EFI /dev/sda1
@@ -18,7 +18,7 @@ sudo mkfs.ext4 -L BOOT /dev/sda2
 sudo cryptsetup luksFormat --type=luks2 -s=512 /dev/sda3
 sudo cryptsetup luksOpen /dev/sda3 void
 
-sudo mkfs.btrfs -L Void /dev/mapper/void
+sudo mkfs.btrfs -L void /dev/mapper/void
 sudo BTRFS_OPTS="rw,relatime,compress=zstd,space_cache=v2,discard=async"
 sudo mount -o $BTRFS_OPTS /dev/mapper/void /mnt
 
@@ -28,7 +28,7 @@ sudo btrfs su cr /mnt/snapshots
 sudo mkdir -p /mnt/home
 sudo mount -o $BTRFS_OPTS,subvol=home /dev/mapper/void /mnt/home
 sudo mkdir -p /mnt/.snapshots
-sudo mount -o $BTRFS_OPTS,subvol=snapshots /dev/mapper/cryptroot /mnt/.snapshots
+sudo mount -o $BTRFS_OPTS,subvol=snapshots /dev/void/cryptroot /mnt/.snapshots
 sudo mkdir -p /mnt/boot
 sudo mount /dev/sda2 /mnt/boot
 sudo mkdir -p /mnt/boot/efi
@@ -69,28 +69,28 @@ xbps-install -S
 nano /etc/dracut.conf.d/override.conf
 hostonly="yes"
 hostonly_cmdline="no"
-stdloglvl="3"
-show_modules="yes"
 compress="lz4"
 omit_dracutmodules+=" brltty rpmversion selinux convertfs ssh-client "
+force_drivers+=" i915 "
   
-
 nano /etc/fstab
-  /dev/sda2 /boot	ext4	defaults,relatime	0	2
-  /dev/sda1	/boot/efi	vfat	defaults,relatime	0	2
+tmpfs                                           /tmp            tmpfs   defaults,nosuid,nodev   0       0
+UUID= /boot ext4 defaults,relatime  0 2
+UUID= /boot/efi vfat defaults,relatime 0 2
+UUID= / btrfs defaults,noatime,compress=zstd:3  0 0
+UUID= /home btrfs subvol=home,noatime 0 0
+UUID= /.snapshots btrfs subvol=snapshots,noatime 0 0
 
 xbps-install dbus-elogind dbus-elogind-libs elogind #dbus-elogind-x11 Optional
 
-xbps-install intel-ucode
-xbps-install rtkit
+xbps-install intel-ucode rtkit dracut-uefi gummiboot-efistub
 
-xbps-install dracut-uefi gummiboot-efistub
 cp /usr/lib/gummiboot/linuxx64.efi.stub /boot/efi/
 nano /etc/default/dracut-uefi-hook
 
-sudo blkid
+sudo lsblk -f
 
- KERNEL_CMDLINE="loglevel=3 rd.luks.name=<LUKS root UUID>=void root=UUID=<UUID> rootflags=rw rootfstype=btrfs rd.auto=1 rd.luks.allow-discards rd.driver.pre=i915 udev.log_level=2 console=tty6 vt.global_cursor_default=0 quiet splash"
+KERNEL_CMDLINE="loglevel=3 rd.luks.name=<LUKS root UUID>=void root=UUID=<UUID> rd.luks.allow-discards rd.driver.pre=i915 udev.log_level=2 console=tty6 quiet splash"
 
 
 xbps-install NetworkManager iwd
