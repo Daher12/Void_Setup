@@ -12,10 +12,70 @@ sudo nano /etc/environment
  LIBSEAT_BACKEND=logind
 
 sudo xbps-install -Suv 
-sudo xbps-install mesa-dri vulkan-loader mesa-vulkan-intel intel-video-accel
-sudo xbps-install polkit xorg-fonts xorg-minimal xorg-server-xwayland
-sudo xbps-install xdg-desktop-portal xdg-user-dirs xdg-user-dirs-gtk xdg-utils nix
+sudo xbps-install mesa-dri vulkan-loader mesa-vulkan-intel intel-video-accel polkit 
+sudo xbps-install xorg-fonts xorg-minimal xorg-server-xwayland
+sudo xbps-install xdg-desktop-portal xdg-user-dirs xdg-user-dirs-gtk xdg-utils
+sudo xbps-install gnome-core
+
+sudo xbps-install firefox fish-shell xtools ffmpeg unrar unzip 7zip file-roller vlc zramen 
+sudo xbps-install earlyoom thermald tlp pipewire wireplumber alsa-utils sbctl alsa-firmware
+
+##sudo xbps-install flatpak fuse fuse3
+
+sudo nano /etc/tlp.conf
+sudo nano /etc/sv/zramen/conf 
+
+sudo ln -sv /etc/sv/thermald /var/service/
+sudo ln -sv /etc/sv/earlyoom /var/service/
+sudo ln -sv /etc/sv/tlp /var/service
+sudo ln -sv /etc/sv/zramen /var/service
+
+sudo ln -sv /usr/share/applications/pipewire.desktop /etc/xdg/autostart/pipewire.desktop ## Gnome
+sudo cp -a /usr/share/pipewire /etc
+sudo cp -a /usr/share/wireplumber /etc
+
+sudo mkdir -p /etc/pipewire/pipewire.conf.d ## Pipewire-pulse
+sudo ln -sv /usr/share/examples/pipewire/20-pipewire-pulse.conf /etc/pipewire/pipewire.conf.d/  ## Pipewire-pulse
+sudo ln -sv /usr/share/examples/wireplumber/10-wireplumber.conf /etc/pipewire/pipewire.conf.d/ ## StartWireplumber
+
+
+sudo nano /etc/xbps.d/99-ignore.conf
+ ignorepkg=btrfs-progs
+ ignorepkg=openssh
+ ignorepkg=xfsprogs
+sudo xbps-remove btrfs-progs openssh xfsprogs
+sudo xbps-remove-Oo
+
+sudo ln -sv /usr/share/fontconfig/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
+
+## https://www.nerdfonts.com/font-downloads
+curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+omf install bobthefish
+
+fc-cache -f -v
+sudo xbps-reconfigure -f fontconfig
+
+sudo xbps-query -l | grep linux
+sudo xbps-reconfigure -f linux<kernel_version>
+
+## restricted packages
+
+ git clone https://github.com/void-linux/void-packages
+ cd void-packages
+ ./xbps-src binary-bootstrap
+ echo "XBPS_ALLOW_RESTRICTED=yes" >> etc/conf
  
+ ./xbps-src pkg -f spotify
+ xi spotify
+       
+     https://wiki.archlinux.org/title/Silent_boot 
+
+
+----------------------------------------------------------------------------------------------------
+
+Nix&Hyprland:
+sudo xbps-install alacritty udiskie cronie font-awesome waybar rofi gtklock swayidle swaybg Thunar thunar-archive-plugin brillo dunst greetd blueman #nix
+
 sudo nano /etc/nix/nix.conf
   experimental-features = nix-command flakes
  
@@ -23,11 +83,6 @@ sudo nano /etc/nix/nix.conf
 
 sudo nix profile install nixpkgs#hyprland --experimental-features 'nix-command flakes'
 sudo nix profile install github:guibou/nixGL --impure --experimental-features 'nix-command flakes'
-
-sudo xbps-install alacritty firefox fish-shell
-sudo xbps-install xtools ffmpeg unrar unzip 7zip font-awesome
-sudo xbps-install udiskie cronie earlyoom thermald tlp pipewire wireplumber alsa-utils sbctl
-sudo xbps-install waybar rofi gtklock swayidle swaybg Thunar thunar-archive-plugin file-roller blueman vlc brillo dunst greetd zramen
 
 sudo nano /etc/greetd/config.toml
  [terminal]
@@ -38,21 +93,6 @@ sudo nano /etc/greetd/config.toml
  [initial_session]
  command = "dbus-run-session nixGL Hyprland"
  user = "dk"
-
-##sudo xbps-install flatpak fuse fuse3
-
-sudo nano /etc/tlp.conf
-
-sudo ln -sv /etc/sv/thermald /var/service/
-sudo ln -sv /etc/sv/earlyoom /var/service/
-sudo ln -sv /etc/sv/zramen /var/service
-
-sudo nano /etc/sv/zramen/conf 
-
-sudo ln -sv /usr/share/applications/pipewire.desktop /etc/xdg/autostart/pipewire.desktop
-sudo cp -a /usr/share/pipewire /etc
-sudo cp -a /usr/share/wireplumber /etc
-
 
 ## https://wiki.alpinelinux.org/wiki/PipeWire#Disable_D-Bus_support
 
@@ -89,43 +129,3 @@ sudo nano /etc/udev/rules.d/backlight.rules
 RUN+="/bin/chgrp wheel /sys/class/backlight/intel_backlight/brightness"
 RUN+="/bin/chmod g+w /sys/class/backlight/intel_backlight/brightness"
  
-
-sudo nano /etc/xbps.d/99-ignore.conf
- ignorepkg=btrfs-progs
- ignorepkg=openssh
- ignorepkg=xfsprogs
-sudo xbps-remove btrfs-progs openssh xfsprogs
-sudo xbps-remove-Oo
-
-sudo ln -sv /usr/share/fontconfig/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
-
-## https://www.nerdfonts.com/font-downloads
-curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
-omf install bobthefish
-
-fc-cache -f -v
-sudo xbps-reconfigure -f fontconfig
-
-set -g theme_nerd_fonts yes
-
-sudo xbps-query -l | grep linux
-sudo xbps-reconfigure -f linux<kernel_version>
-
-
-
-
-
-## restricted packages
-
- git clone https://github.com/void-linux/void-packages
- cd void-packages
- ./xbps-src binary-bootstrap
- echo "XBPS_ALLOW_RESTRICTED=yes" >> etc/conf
- 
- ./xbps-src pkg -f spotify
- xi spotify
-       
-     https://wiki.archlinux.org/title/Silent_boot 
-
-
-
