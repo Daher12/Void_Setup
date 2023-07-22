@@ -75,7 +75,7 @@ sudo xbps-reconfigure -f linux<kernel_version>
 ----------------------------------------------------------------------------------------------------
 
 Nix&Hyprland:
-sudo xbps-install alacritty udiskie cronie font-awesome waybar rofi gtklock swayidle swaybg Thunar thunar-archive-plugin brillo dunst greetd blueman #nix
+sudo xbps-install alacritty udiskie cronie font-awesome Waybar rofi gtklock swayidle swaybg Thunar thunar-archive-plugin brillo dunst greetd blueman #nix
 
 sudo nano /etc/nix/nix.conf
   experimental-features = nix-command flakes
