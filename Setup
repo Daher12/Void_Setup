@@ -9,30 +9,25 @@
 
 ## Vorbereitung:
 
-sudo wipefs -a /dev/*
-sudo cfdisk
+sudo wipefs -a /dev/nvme0n1p# /sda
+sudo cfdisk /dev/nvme0n1
 
 
-sudo mkfs.vfat -F32 -n EFI /dev/sda1
-sudo mkfs.ext4 -L BOOT /dev/sda2
-sudo cryptsetup luksFormat --type=luks2 -s=512 /dev/sda3
-sudo cryptsetup luksOpen /dev/sda3 void
+sudo mkfs.vfat -F32 -n EFI /dev/nvme0n1p5
+sudo cryptsetup luksFormat --type=luks2 /dev/nvme0n1p6
+sudo cryptsetup luksOpen /dev/nvme0n1p6 void
 
 sudo mkfs.btrfs -L void /dev/mapper/void
 sudo BTRFS_OPTS="rw,relatime,compress=zstd,space_cache=v2,discard=async"
 sudo mount -o $BTRFS_OPTS /dev/mapper/void /mnt
 
 sudo btrfs su cr /mnt/home
-sudo btrfs su cr /mnt/snapshots
 
 sudo mkdir -p /mnt/home
 sudo mount -o $BTRFS_OPTS,subvol=home /dev/mapper/void /mnt/home
-sudo mkdir -p /mnt/.snapshots
-sudo mount -o $BTRFS_OPTS,subvol=snapshots /dev/void/cryptroot /mnt/.snapshots
-sudo mkdir -p /mnt/boot
-sudo mount /dev/sda2 /mnt/boot
 sudo mkdir -p /mnt/boot/efi
-sudo mount /dev/sda1 /mnt/boot/efi
+sudo mkdir -p /mnt/efi
+sudo mount /dev/nvme0n1p5 /mnt/efi
 
 sudo mkdir -p /mnt/var
 sudo btrfs su cr /mnt/var/cache
@@ -62,9 +57,7 @@ EDITOR=nano visudo
 xbps-reconfigure -f glibc-locales
 
 xmirror -s https://repo-de.voidlinux.org/
-xbps-install -S
 xbps-install void-repo-nonfree
-xbps-install -S
 
 nano /etc/dracut.conf.d/override.conf
 hostonly="yes"
@@ -81,9 +74,9 @@ UUID= / btrfs defaults,noatime,compress=zstd:3  0 0
 UUID= /home btrfs subvol=home,noatime 0 0
 UUID= /.snapshots btrfs subvol=snapshots,noatime 0 0
 
-xbps-install dbus-elogind dbus-elogind-libs elogind #dbus-elogind-x11 Optional
+xbps-install -S dbus-elogind dbus-elogind-libs elogind #dbus-elogind-x11 Optional
 
-xbps-install intel-ucode rtkit dracut-uefi gummiboot-efistub bluez libbluetooth 
+xbps-install -S intel-ucode rtkit dracut-uefi gummiboot-efistub bluez libbluetooth 
 
 cp /usr/lib/gummiboot/linuxx64.efi.stub /boot/efi/
 nano /etc/default/dracut-uefi-hook
