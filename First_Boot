@@ -1,4 +1,7 @@
 ## https://gitlab.gnome.org/Community/Ubuntu/mutter/-/tree/triple-buffering-v4-44 > Edit mutter template in void packages
+## https://tech.aufomm.com/my-nix-journey-use-nix-with-ubuntu/#nix-flake
+## https://github.com/Makrennel/hyprland-void.git
+## 
 
 touch /etc/sv/acpid/down
 ln -sv /etc/sv/dbus /var/service/
