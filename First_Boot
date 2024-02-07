@@ -17,17 +17,18 @@ reboot
 
 sudo nano /etc/environment
  LIBSEAT_BACKEND=logind
+ QT_QPA_PLATFORM=wayland-egl
+ ELM_DISPLAY=wl
+ SDL_VIDEODRIVER=wayland
+ MOZ_ENABLE_WAYLAND=1
 
 sudo xbps-install -Suv 
 sudo xbps-install mesa-dri vulkan-loader mesa-vulkan-intel intel-video-accel polkit 
 sudo xbps-install xorg-fonts xorg-minimal xorg-server-xwayland
-sudo xbps-install xdg-desktop-portal xdg-user-dirs xdg-user-dirs-gtk xdg-utils
+sudo xbps-install xdg-desktop-portal xdg-user-dirs xdg-user-dirs-gtk 
 sudo xbps-install gnome-core
 
-sudo xbps-install firefox fish-shell xtools ffmpeg unrar unzip 7zip file-roller vlc zramen chrony cronie
-sudo xbps-install earlyoom thermald tlp pipewire wireplumber wireplumber-elogind alsa-utils sbctl alsa-firmware  
- 
-##sudo xbps-install flatpak fuse fuse3
+sudo xbps-install firefox fish-shell file-roller vlc zramen chrony cronie earlyoom thermald tlp pipewire wireplumber wireplumber-elogind alsa-utils alsa-firmware
 
 sudo nano /etc/tlp.conf
 sudo nano /etc/sv/zramen/conf 
@@ -50,19 +51,21 @@ sudo ln -sv /usr/share/examples/wireplumber/10-wireplumber.conf /etc/pipewire/pi
 
 sudo nano /etc/xbps.d/99-ignore.conf
  ignorepkg=btrfs-progs
- ignorepkg=openssh
- ignorepkg=xfsprogs
-sudo xbps-remove btrfs-progs openssh xfsprogs
-sudo xbps-remove-Oo
+ ignorepkg=yelp
+ ignorepkg=
+sudo xbps-remove btrfs-progs yelp
+sudo xbps-remove -Oo
 
 sudo ln -sv /usr/share/fontconfig/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
+
+sh <(curl -L https://nixos.org/nix/install) --no-daemon
+
 
 ## https://www.nerdfonts.com/font-downloads
 curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
 omf install bobthefish
 
 fc-cache -f -v
-sudo xbps-reconfigure -f fontconfig
 
 sudo xbps-query -l | grep linux
 sudo xbps-reconfigure -f linux<kernel_version>
