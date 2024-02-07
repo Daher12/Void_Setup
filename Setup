@@ -32,7 +32,7 @@ sudo mkdir -p /mnt/boot/efi
 sudo mkdir -p /mnt/efi
 sudo mount /dev/nvme0n1p1 /mnt/efi
 
-sudo xbps-install -S -R https://repo-de.voidlinux.org/current -r /mnt base-system cryptsetup nano xmirror xfsprogs lz4 xz curl lvm2
+sudo xbps-install -S -R https://repo-de.voidlinux.org/current -r /mnt base-system cryptsetup nano xmirror xfsprogs lz4 xz curl lvm2 zstd
 
 su
 xchroot /mnt
