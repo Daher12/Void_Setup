@@ -54,8 +54,8 @@ nano /etc/dracut.conf.d/override.conf
 hostonly="yes"
 hostonly_cmdline="no"
 compress="lz4"
-omit_dracutmodules+=" brltty rpmversion selinux convertfs ssh-client "
-force_drivers+=" i915 "
+omit_dracutmodules+=" brltty rpmversion selinux convertfs "
+add_drivers+=" i915 "
   
 nano /etc/fstab
 tmpfs                                           /tmp            tmpfs   defaults,nosuid,nodev   0       0
