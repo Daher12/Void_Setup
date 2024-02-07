@@ -9,38 +9,30 @@
 
 ## Vorbereitung:
 
-sudo wipefs -a /dev/nvme0n1p# /sda
+sudo wipefs -a /dev/nvme0n1p
 sudo cfdisk /dev/nvme0n1
 
 
-sudo mkfs.vfat -F32 -n EFI /dev/nvme0n1p5
-sudo cryptsetup luksFormat --type=luks2 /dev/nvme0n1p6
-sudo cryptsetup luksOpen /dev/nvme0n1p6 void
 
-sudo mkfs.btrfs -L void /dev/mapper/void
-sudo BTRFS_OPTS="rw,relatime,compress=zstd,space_cache=v2,discard=async"
-sudo mount -o $BTRFS_OPTS /dev/mapper/void /mnt
+sudo mkfs.vfat -F32 -n EFI /dev/nvme0n1p1
+sudo cryptsetup luksFormat --type=luks2 /dev/nvme0n1p2
+sudo cryptsetup luksOpen /dev/nvme0n1p2 void
 
-sudo btrfs su cr /mnt/home
+sudo vgcreate voidvm /dev/mapper/void
+sudo lvcreate --name root -L 110G void
+sudo lvcreate --name home -l 100%FREE void
 
+sudo mkfs.xfs -L root /dev/void/root
+sudo mkfs.xfs -L root /dev/void/home
+
+sudo mount /dev/void/root /mnt
 sudo mkdir -p /mnt/home
-sudo mount -o $BTRFS_OPTS,subvol=home /dev/mapper/void /mnt/home
+sudo mount /dev/void/home /mnt/home
 sudo mkdir -p /mnt/boot/efi
 sudo mkdir -p /mnt/efi
-sudo mount /dev/nvme0n1p5 /mnt/efi
+sudo mount /dev/nvme0n1p1 /mnt/efi
 
-sudo mkdir -p /mnt/var
-sudo btrfs su cr /mnt/var/cache
-sudo btrfs su cr /mnt/var/tmp
-sudo btrfs su cr /mnt/var/log
-sudo mkdir -p /mnt/var/lib
-sudo btrfs su cr /mnt/var/lib/flatpak
-
-
-sudo mkdir -p /mnt/var/db/xbps/keys
-sudo cp /var/db/xbps/keys/* /mnt/var/db/xbps/keys/
-
-sudo xbps-install -S -R https://repo-de.voidlinux.org/current -r /mnt base-system cryptsetup nano xmirror btrfs-progs lz4
+sudo xbps-install -S -R https://repo-de.voidlinux.org/current -r /mnt base-system cryptsetup nano xmirror xfsprogs lz4 xz curl lvm2
 
 su
 xchroot /mnt
@@ -50,7 +42,6 @@ passwd root
 nano /etc/hostname
 nano /etc/locale.conf
 nano /etc/default/libc-locales
-nano /etc/rc.conf
 EDITOR=nano visudo
    %wheel ALL=(ALL) ALL
 
@@ -68,22 +59,19 @@ force_drivers+=" i915 "
   
 nano /etc/fstab
 tmpfs                                           /tmp            tmpfs   defaults,nosuid,nodev   0       0
-UUID= /boot ext4 defaults,relatime  0 2
-UUID= /boot/efi vfat defaults,relatime 0 2
-UUID= / btrfs defaults,noatime,compress=zstd:3  0 0
-UUID= /home btrfs subvol=home,noatime 0 0
-UUID= /.snapshots btrfs subvol=snapshots,noatime 0 0
+UUID= /efi vfat defaults 0 0
+UUID= /     xfs     defaults              0       0
+UUID= /home xfs     defaults              0       0
 
-xbps-install -S dbus-elogind dbus-elogind-libs elogind #dbus-elogind-x11 Optional
 
-xbps-install -S intel-ucode rtkit dracut-uefi gummiboot-efistub bluez libbluetooth 
+xbps-install -S dbus-elogind dbus-elogind-libs elogind intel-ucode rtkit dracut-uefi gummiboot-efistub bluez libbluetooth #dbus-elogind-x11 Optional
 
 cp /usr/lib/gummiboot/linuxx64.efi.stub /boot/efi/
 nano /etc/default/dracut-uefi-hook
 
 sudo lsblk -f
 
-KERNEL_CMDLINE="loglevel=3 rd.luks.name=<LUKS root UUID>=void root=UUID=<UUID> rd.luks.allow-discards rd.driver.pre=i915 udev.log_level=2 console=tty6 quiet splash"
+KERNEL_CMDLINE="loglevel=3 rd.auto=1 rd.lvm.vg=void root=UUID=<UUID> rd.luks.allow-discards rd.driver.pre=i915 udev.log_level=2 fbcon=nodefer quiet splash"
 
 
 xbps-install NetworkManager iwd
