@@ -26,9 +26,9 @@ sudo xbps-install -Suv
 sudo xbps-install mesa-dri vulkan-loader mesa-vulkan-intel intel-video-accel polkit 
 sudo xbps-install xorg-fonts xorg-minimal xorg-server-xwayland
 sudo xbps-install xdg-desktop-portal xdg-user-dirs xdg-user-dirs-gtk 
-sudo xbps-install gnome-core
+sudo xbps-install gnome-core gnome-console
 
-sudo xbps-install firefox fish-shell file-roller zramen chrony cronie earlyoom thermald tlp pipewire wireplumber wireplumber-elogind alsa-utils alsa-firmware
+sudo xbps-install firefox fish-shell file-roller zramen chrony cronie earlyoom thermald tlp pipewire wireplumber wireplumber-elogind alsa-utils alsa-firmware tailscale
 
 sudo nano /etc/tlp.conf
 sudo nano /etc/sv/zramen/conf 
