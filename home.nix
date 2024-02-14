@@ -35,7 +35,7 @@
 
     pkgs.nixgl.nixGLIntel
     pkgs.notepad-next
-	pkgs.mosh
+    pkgs.mosh
     pkgs.swayidle
     pkgs.btop
     pkgs.neofetch
@@ -58,9 +58,8 @@
     pkgs.swaybg
     pkgs.dunst
     pkgs.android-file-transfer
-    #pkgs.fuse
-	pkgs.remmina
-	pkgs.moonlight-qt
+    pkgs.remmina
+    pkgs.moonlight-qt
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
