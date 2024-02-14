@@ -19,11 +19,11 @@ sudo cryptsetup luksFormat --type=luks2 /dev/nvme0n1p2
 sudo cryptsetup luksOpen /dev/nvme0n1p2 void
 
 sudo vgcreate voidvm /dev/mapper/void
-sudo lvcreate --name root -L 110G void
+sudo lvcreate --name root -L 50G void
 sudo lvcreate --name home -l 100%FREE void
 
 sudo mkfs.xfs -L root /dev/void/root
-sudo mkfs.xfs -L root /dev/void/home
+sudo mkfs.xfs -L home /dev/void/home
 
 sudo mount /dev/void/root /mnt
 sudo mkdir -p /mnt/home
@@ -79,7 +79,7 @@ mkdir -p /etc/NetworkManager/conf.d/
 nano /etc/NetworkManager/conf.d/wifi_backend.conf
 [device]
 wifi.backend=iwd
-wifi.iwd.autoconnect=yes
+#wifi.iwd.autoconnect=yes
 
 nano /etc/iwd/main.conf
 [General]
