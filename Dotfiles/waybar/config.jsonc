@@ -20,7 +20,7 @@
     ],
     "modules-right": [
         "network",
-        "wireplumber",
+        "pulseaudio",
         "backlight",
         "battery",
         "custom/notifications",
@@ -67,7 +67,7 @@
         },
         "interval": 4
     },
-    "wireplumber": {
+    "pulseaudio": {
         // "scroll-step": 1, // %, can be a float
         "format":"<span rise='-5000'>{icon} </span><span font='10.5' rise='-6000'>{volume}%</span>", // {format_source}
         "format-bluetooth": "{icon} {volume}%", // {format_source}
